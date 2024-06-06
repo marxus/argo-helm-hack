@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mygenerate
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/marxus/argo-helm-hack
+    targetRevision: main
+    path: mygenerate
+    helm:
+      parameters:
+        - { name: ENV_VAR1, value: BLALALASASSASDASDASDASD }
+  destination:
+    name: in-cluster
+    namespace: mygenerate
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+      - CreateNamespace=true

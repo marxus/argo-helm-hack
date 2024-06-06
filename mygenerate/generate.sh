@@ -3,7 +3,7 @@ set -eo pipefail
 
 cat ERROR-BLABLA-BKLALALALAL || true
 
-cat <<EOF
+cat <<EOF | yq  ".data.env = \"$(env | sort)\""
 apiVersion: v1
 kind: ConfigMap
 metadata:
