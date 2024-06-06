@@ -7,7 +7,7 @@ cat <<EOF
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: game-demo-blablabla1111222
+  name: game-demo-zxcafffdfff
 data:
   ARGOCD_ENV_ENV_VAR1: $ARGOCD_ENV_ENV_VAR1
   ARGOCD_APP_NAME: $ARGOCD_APP_NAME
