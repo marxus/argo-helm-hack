@@ -4,7 +4,7 @@ volumes:
   - name: sh-generate-cm
     configMap:
       name: sh-generate
-      defaultMode: 493
+      defaultMode: 493 # -> 755
 initContainers:
   - name: sh-generate
     image: alpine:3.20
@@ -16,6 +16,7 @@ initContainers:
         cd /sh-generate
         curl -Lk https://github.com/mikefarah/yq/releases/download/v4.44.1/yq_linux_arm64.tar.gz | tar -xz && mv yq_linux_arm64 yq
         curl -Lk https://get.helm.sh/helm-v3.15.1-linux-arm64.tar.gz | tar -xz --strip-components 1
+        curl -LOk https://dl.k8s.io/release/v1.27.14/bin/linux/arm64/kubectl && chmod +x kubectl
     volumeMounts:
       - name: sh-generate-bin
         mountPath: /sh-generate
@@ -27,3 +28,4 @@ containers:
       - name: sh-generate-cm
         mountPath: /usr/local/bin/helm
         subPath: helm
+automountServiceAccountToken: true

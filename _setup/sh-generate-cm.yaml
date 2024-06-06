@@ -6,8 +6,36 @@ data:
   helm: |
     #!/usr/bin/bash
     export PATH="/sh-generate:$PATH"
-    if [ "$1" == "template" ] && [ "$(cat Chart.yaml | yq '.name + "-" + .version')" == sh-generate-0 ]; then
-      exec bash generate.sh
-    else
-      exec helm "$@"
-    fi
+
+    # if Chart.yaml isn't empty or generate.sh doesn't exists -> exec helm
+    [[ -s Chart.yaml || ! -f generate.sh ]] && exec helm "$@"
+
+    # if not "helm template" -> exit
+    [ "$1" != template ] && exit 0
+
+    ARGS=("$@")
+    for ((i = 0; i < "$#"; i++)); do
+      case "${ARGS[$i]}" in
+        --name-template)
+          i="$((i + 1))"
+          export ARGOCD_APP_NAME="${ARGS[$i]}"
+          ;;
+
+        --namespace)
+          i="$((i + 1))"
+          export ARGOCD_APP_NAMESPACE="${ARGS[$i]}"
+          ;;
+
+        --set)
+          i="$((i + 1))"
+          IFS== read -r k v <<<"${ARGS[$i]}"
+          export "ARGOCD_ENV_$k"="$v"
+          ;;
+      esac
+    done
+    export ARGOCD_APP_REVISION="$(git log -n1 --pretty="format:%H")"
+    export ARGOCD_APP_REVISION_SHORT="$(echo "$ARGOCD_APP_REVISION" | head -c7)"
+    export ARGOCD_APP_SOURCE_REPO_TOP_LEVEL="$(pwd | cut -d/ -f-4)"
+    export ARGOCD_APP_SOURCE_PATH="$(realpath --relative-to="$ARGOCD_APP_SOURCE_REPO_TOP_LEVEL" .)"
+    export ARGOCD_APP_SOURCE_REPO_URL="$(git config --get remote.origin.url)"
+    chmod +x generate.sh; exec ./generate.sh
