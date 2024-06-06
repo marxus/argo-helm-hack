@@ -1,0 +1,29 @@
+volumes:
+  - name: sh-generate-bin
+    emptyDir: {}
+  - name: sh-generate-cm
+    configMap:
+      name: sh-generate
+      defaultMode: 493
+initContainers:
+  - name: sh-generate
+    image: alpine:3.20
+    command: [sh, -c]
+    args:
+      - |
+        apk add --no-cache curl
+
+        cd /sh-generate
+        curl -Lk https://github.com/mikefarah/yq/releases/download/v4.44.1/yq_linux_arm64.tar.gz | tar -xz && mv yq_linux_arm64 yq
+        curl -Lk https://get.helm.sh/helm-v3.15.1-linux-arm64.tar.gz | tar -xz --strip-components 1
+    volumeMounts:
+      - name: sh-generate-bin
+        mountPath: /sh-generate
+containers:
+  - name: argocd-repo-server
+    volumeMounts:
+      - name: sh-generate-bin
+        mountPath: /sh-generate
+      - name: sh-generate-cm
+        mountPath: /usr/local/bin/helm
+        subPath: helm

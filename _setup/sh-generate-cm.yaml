@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sh-generate
+data:
+  helm: |
+    #!/usr/bin/bash
+    export PATH="/sh-generate:$PATH"
+    if [ "$1" == "template" ] && [ "$(cat Chart.yaml | yq '.name + "-" + .version')" == sh-generate-0 ]; then
+      exec bash generate.sh
+    else
+      exec helm "$@"
+    fi
