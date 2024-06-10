@@ -9,8 +9,8 @@ spec:
     repoURL: https://github.com/marxus/argo-helm-hack
     targetRevision: testthis
     path: mygenerate
-    helm:
-      parameters:
+    plugin:
+      env:
         - name: ENV_VAR1
           value: bla
         - name: HIDDDDEEEE
