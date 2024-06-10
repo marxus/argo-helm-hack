@@ -1,0 +1,23 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: argocd
+  name: sh-generate
+rules:
+  - apiGroups: [argoproj.io]
+    resources: [applications]
+    verbs: [get]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  namespace: argocd
+  name: sh-generate
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: sh-generate
+subjects:
+  - kind: ServiceAccount
+    name: argocd-repo-server
+    namespace: argocd

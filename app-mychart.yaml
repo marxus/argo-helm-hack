@@ -1,12 +1,13 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
+  namespace: argocd
   name: mychart
 spec:
   project: default
   source:
     repoURL: https://github.com/marxus/argo-helm-hack
-    targetRevision: main
+    targetRevision: testthis
     path: mychart
   destination:
     name: in-cluster
