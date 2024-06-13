@@ -3,14 +3,16 @@ kind: Application
 metadata:
   namespace: argocd
   name: mygenerate
+  annotations:
+    argocd.argoproj.io/manifest-generate-paths: /tigger-change
 spec:
   project: default
   source:
     repoURL: https://github.com/marxus/argo-helm-hack
     targetRevision: testthis
     path: mygenerate
-    plugin:
-      env:
+    helm:
+      parameters:
         - name: ENV_VAR1
           value: bla
         - name: HIDDDDEEEE
